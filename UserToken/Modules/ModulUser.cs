@@ -1,4 +1,6 @@
-﻿namespace UserToken.Modules
+﻿using static System.Runtime.InteropServices.JavaScript.JSType;
+
+namespace UserToken.Modules
 {
     public enum UserAcces
     {
@@ -29,6 +31,12 @@
             return Reverse(username + userpassword);
         }
         
+        string GetUserInfoFull(string key, (string, string, UserAcces) Value)
+        {
+            return $"UserName: {key}\n\tUserPass: {Value.Item1}\n\tUser Token: {Value.Item2}\n\tUser atc: {Value.Item3}\n";
+        }
+
+
         void _registr_user(string username, string userpassword , UserAcces userAcces)
         {
 
@@ -96,8 +104,25 @@
             {
                 foreach (var item in Users)
                 {
-                    
+                    if(item.Value.Item2 == token)
+                    {
+                        if(item.Value.Item3 == UserAcces.admin) 
+                            if(Users.ContainsKey(username))
+                            {
+                         
+                                return GetUserInfoFull(username, Users[username]);
+                            }
+                            else
+                            {
+                                return "Error usser name or token";
+                            }
+
+
+
+                        break;
+                    }
                 }
+                return "Error";
             });
 
 
@@ -108,7 +133,7 @@
                 string data_ = "";
                 foreach (var item in Users)
                 {
-                    data_ += $"UserName: {item.Key}\n\tUserPass: {item.Value.Item1}\n\tUser Token: {item.Value.Item2}\n\tUser atc: {item.Value.Item3}\n";
+                    data_ += GetUserInfoFull(item.Key, item.Value);
                 }
                 return data_;
             });
